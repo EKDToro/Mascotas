@@ -20,42 +20,6 @@
       color: #000000;
       background-color: #49BAD6 }
 </style>
-
-<script>
-  $(document).ready(function(){
-      //Ocultar Alerta cuando cargue la pagina
-      $("#alertaNombre").hide();
-      var mensaje = "";
-      $("#alertaNombre").html(mensaje);
-      //si nombre pierde el foco
-      $("#nombre").focusout(function(){
-          // si no hay caracteres, mostramos alerta
-          if ($("#nombre").val().trim().length == 0) {
-              mensaje = "Debe ingresar un Nombre";
-          } else {
-              //si hay caracteres, ocultamos la alerta
-              $("#alertaNombre").hide();
-          }
-      })
-      $("#email").focusout(function(){
-          // si no hay caracteres, mostramos alerta
-          if ($("#email").val().trim().length == 0) {
-              mensaje = "Debe ingresar un Email";
-          } else {
-              //si hay caracteres, ocultamos la alerta
-              $("#alertaNombre").hide();
-          }
-      })
-      $("#formulario").submit(function(){
-          debugger;
-          if(mensaje.length >= 0){
-              $("#alertaNombre").html(mensaje);
-              $("#alertaNombre").show();
-              event.preventDefault();
-          }
-      })
-  });
-</script>
 </head>
 <body>
  <!-- NAVBAR -->
@@ -74,16 +38,15 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="index.html">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="Perros.html">Perros</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="Gatos.html">Gatos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="Registro.html">Registro</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Registro.html">Registro</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Perros.html">Perros</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Gatos.html">Gatos</a>
+          </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Mas animales
@@ -97,10 +60,10 @@
         </li>
       </ul>
       <form class="d-flex">
+        <button type="button" onclick="javascript:void(window.open('carrito.html'));" title="carrito de compras">Carrito</button>
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Buscar</button>
       </form>
-      <button type="button" onclick="javascript:void(window.open('carrito.html'));" title="carrito de compras">Carrito</button>
     </div>
   </div>
 </nav>
