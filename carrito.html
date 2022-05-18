@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          // Variables
+          const baseDeDatos = [
+              {
+                  id: 1,
+                  nombre: 'Comida de gato',
+                  precio: 8000,
+                  imagen: 'catfood.jpg'
+              },
+              {
+                  id: 2,
+                  nombre: 'Comida de perro',
+                  precio: 5000,
+                  imagen: 'dogfood.jpg'
+              },
+              {
+                  id: 3,
+                  nombre: 'Comida de pajaro',
+                  precio: 9000,
+                  imagen: 'birdfood.jpg'
+              },
+              {
+                  id: 4,
+                  nombre: 'Fabricio',
+                  precio: 1,
+                  imagen: 'fabricio.jpg'
+              }
+          ];
+
+          let carrito = [];
+          const divisa = '$';
+          const DOMitems = document.querySelector('#items');
+          const DOMcarrito = document.querySelector('#carrito');
+          const DOMtotal = document.querySelector('#total');
+          const DOMbotonVaciar = document.querySelector('#boton-vaciar');
+          // Funciones
+          /**
+          * Dibuja todos los productos a partir de la base de datos. No confundir con el carrito
+          */
+          function renderizarProductos() {
+              baseDeDatos.forEach((info) => {
+                  // Estructura
+                  const miNodo = document.createElement('div');
+                  miNodo.classList.add('card', 'col-sm-4');
+                  // Body
+                  const miNodoCardBody = document.createElement('div');
+                  miNodoCardBody.classList.add('card-body');
+                  // Titulo
+                  const miNodoTitle = document.createElement('h5');
+                  miNodoTitle.classList.add('card-title');
+                  miNodoTitle.textContent = info.nombre;
+                  // Imagen
+                  const miNodoImagen = document.createElement('img');
+                  miNodoImagen.classList.add('img-fluid');
+                  miNodoImagen.setAttribute('src', info.imagen);
+                  // Precio
+                  const miNodoPrecio = document.createElement('p');
+                  miNodoPrecio.classList.add('card-text');
+                  miNodoPrecio.textContent = `${divisa}${info.precio}`;
+                  // Boton
+                  const miNodoBoton = document.createElement('button');
+                  miNodoBoton.classList.add('btn', 'btn-primary');
+                  miNodoBoton.textContent = '+';
+                  miNodoBoton.setAttribute('marcador', info.id);
+                  miNodoBoton.addEventListener('click', anyadirProductoAlCarrito);
+                  // Insertamos
+                  miNodoCardBody.appendChild(miNodoImagen);
+                  miNodoCardBody.appendChild(miNodoTitle);
+                  miNodoCardBody.appendChild(miNodoPrecio);
+                  miNodoCardBody.appendChild(miNodoBoton);
+                  miNodo.appendChild(miNodoCardBody);
+                  DOMitems.appendChild(miNodo);
+              });
+          }
+          /**
+          * Evento para añadir un producto al carrito de la compra
+          */
+          function anyadirProductoAlCarrito(evento) {
+              // Anyadimos el Nodo a nuestro carrito
+              carrito.push(evento.target.getAttribute('marcador'))
+              // Actualizamos el carrito
+              renderizarCarrito();
+          }
+          /**
+          * Dibuja todos los productos guardados en el carrito
+          */
+          function renderizarCarrito() {
+              // Vaciamos todo el html
+              DOMcarrito.textContent = '';
+              // Quitamos los duplicados
+              const carritoSinDuplicados = [...new Set(carrito)];
+              // Generamos los Nodos a partir de carrito
+              carritoSinDuplicados.forEach((item) => {
+                  // Obtenemos el item que necesitamos de la variable base de datos
+                  const miItem = baseDeDatos.filter((itemBaseDatos) => {
+                      // ¿Coincide las id? Solo puede existir un caso
+                      return itemBaseDatos.id === parseInt(item);
+                  });
+                  // Cuenta el número de veces que se repite el producto
+                  const numeroUnidadesItem = carrito.reduce((total, itemId) => {
+                      // ¿Coincide las id? Incremento el contador, en caso contrario no mantengo
+                      return itemId === item ? total += 1 : total;
+                  }, 0);
+                  // Creamos el nodo del item del carrito
+                  const miNodo = document.createElement('li');
+                  miNodo.classList.add('list-group-item', 'text-right', 'mx-2');
+                  miNodo.textContent = `${numeroUnidadesItem} x ${miItem[0].nombre} - ${divisa}${miItem[0].precio}`;
+                  // Boton de borrar
+                  const miBoton = document.createElement('button');
+                  miBoton.classList.add('btn', 'btn-danger', 'mx-5');
+                  miBoton.textContent = 'X';
+                  miBoton.style.marginLeft = '1rem';
+                  miBoton.dataset.item = item;
+                  miBoton.addEventListener('click', borrarItemCarrito);
+                  // Mezclamos nodos
+                  miNodo.appendChild(miBoton);
+                  DOMcarrito.appendChild(miNodo);
+              });
+             // Renderizamos el precio total en el HTML
+             DOMtotal.textContent = calcularTotal();
+          }
+          /**
+          * Evento para borrar un elemento del carrito
+          */
+          function borrarItemCarrito(evento) {
+              // Obtenemos el producto ID que hay en el boton pulsado
+              const id = evento.target.dataset.item;
+              // Borramos todos los productos
+              carrito = carrito.filter((carritoId) => {
+                  return carritoId !== id;
+              });
+              // volvemos a renderizar
+              renderizarCarrito();
+          }
+          /**
+           * Calcula el precio total teniendo en cuenta los productos repetidos
+           */
+          function calcularTotal() {
+              // Recorremos el array del carrito
+              return carrito.reduce((total, item) => {
+                  // De cada elemento obtenemos su precio
+                  const miItem = baseDeDatos.filter((itemBaseDatos) => {
+                      return itemBaseDatos.id === parseInt(item);
+                  });
+                  // Los sumamos al total
+                  return total + miItem[0].precio;
+              }, 0).toFixed(0);
+          }
+          /**
+          * Varia el carrito y vuelve a dibujarlo
+          */
+          function vaciarCarrito() {
+              // Limpiamos los productos guardados
+              carrito = [];
+              // Renderizamos los cambios
+              renderizarCarrito();
+          }
+          // Eventos
+          DOMbotonVaciar.addEventListener('click', vaciarCarrito);
+          // Inicio
+          renderizarProductos();
+          renderizarCarrito();
+        });
+    </script>
+</head>
+ <!--COLOR PÁGINA-->
+ <style type="text/css">
+    body{
+        color: #000000;
+        background-color: #49BAD6 }
+  </style>
+<!--CARRITO-->
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- Elementos generados a partir del JSON -->
+            <main id="items" class="col-sm-8 row"></main>
+            <!-- Carrito -->
+            <aside class="col-sm-4">
+                <h2>Carrito</h2>
+                <!-- Elementos del carrito -->
+                <ul id="carrito" class="list-group"></ul>
+                <hr>
+                <!-- Precio total -->
+                <p class="text-right">Total: <span id="total"></span>&dollar;</p>
+                <button id="boton-vaciar" class="btn btn-danger">Vaciar</button>
+            </aside>
+        </div>
+    </div>
+<!--PIE DE PAGINA-->
+    <div class="row footer_laika m-auto justify-content-center mb-4 mt-0 mt-md-4 div_footer_principal " style="background-color: #EE4A52;"><div class="col-md-4 col-lg-2 mt-5 text-center"><span><img data-src="https://www.tiendamascotamania.cl/wp-content/uploads/2021/05/logotipo.png" class="ml-2 text-right img-fluid img_laika_footer lazy" src="https://www.tiendamascotamania.cl/wp-content/uploads/2021/05/logotipo.png"> <p class="ml-0 ml-md-2 mt-2 p_img_laika_footer mb-0">Síguenos en:</p> 
+        <p class="ml-0 ml-md-1"><span class=" filter-contrast-1"><a target="_blank" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text_decoration_general"><i class="fab fa-youtube fa-2x color_purple"></i></a></span> <span class=" filter-contrast-1"><a target="_blank" href="https://www.youtube.com/watch?v=yOMj7WttkOA" class="text_decoration_general"><i class="fab fa-instagram fa-2x color_purple"></i>
+        </a></span> <span class="filter-contrast-1"><a target="_blank" href="https://www.facebook.com/laikamascotaschile/" class="text_decoration_general"><i class="fab fa-facebook-square fa-2x color_purple"></i></a></span></p></span></div> <div class="col-md-2 col-lg-2 mt-2 mt-lg-5 d-none d-lg-block">
+          <h5 class="p_title_footer ">
+          ACERCA DE MANIA
+          </h5> <a href="..."><h6 class="p_text_footer mb-2">
+          Sobre Mania
+          </h6></a> <a href="..."><h6 class="p_text_footer mb-2">
+          Servicios
+          </h6></a> <a href="..."><h6 class="p_text_footer mb-2">
+          Trabaja con nosotros
+          </h6></a> <a href="..." target="_blank"><h6 class="p_text_footer mb-2">
+          Blog
+          </h6></a> <a href="..." target="_blank"><h6 class="p_text_footer mb-2">
+          Términos y condiciones
+          </h6></a></div> <div class="col-md-2 col-lg-2 mt-5 d-none d-lg-block"><h5 class="p_title_footer ">
+          LINKS DE INTERÉS
+          </h5> <a href="..."><h6 class="p_text_footer mb-2">
+          Preguntas frecuentes
+          </h6></a> <h6 class="p_text_footer mb-2">
+          ¿Cómo comprar en Mania?
+          </h6> <a href="..."><h6 class="p_text_footer mb-2">
+          Política de Privacidad
+          </h6></a> <h5 class="p_text_footer mb-2">
+          Contáctanos
+          </h5> <a href="..."><h6 class="p_text_footer mb-2">
+          Políticas de Entrega
+          </h6></a></div> <div class="col-md-2 col-lg-2 mt-5 d-none d-lg-block"><h5 class="p_title_footer ">
+          INFORMACIÓN
+          </h5> <h6 class="p_text_footer mb-2" style="overflow-wrap: break-word;">
+          Teléfono:+56993772096<br><br> servicioalcliente@duocuc.cl<br><br> Santiago de Chile, Chile
+          </h6></div> <div class="col-md-12 col-lg-2 mt-5 d-none d-sm-none d-md-none d-lg-block"><h5 class="p_title_footer ">
+          SUSCRÍBETE
+          </h5> <h6 class="p_text_footer mb-2 pt-0 mb-2 " style="font-size: 11px !important;">
+          Recibe noticias y promociones al instante.
+          </h6> <form action="form-group mt-0 "><div class="input-group "><input type="email" placeholder="Correo electrónico" required="required" class=" form-control text_subscription"> <button type="button" class=" btn bg-laika btn_subcription pt-0 pb-1 ">
+          <span class="bg_purple badge mt-1 " style="width: 30px; height: 25px;"><i class=" fas fa-angle-right text-white align-text-bottom " style="font-size: 18px;">
+          </i></span></button></div> <div class="custom-control custom-checkbox "><input type="checkbox" name="check_notifications" id="check_notifications" class="custom-control-input check_subscription"> 
+          <label for="check_notifications" class="custom-control-label pt-1 font-11 color_purple" style="font-style: italic;">He leído y acepto las <a href="https://laikamascotas.cl/privacy_policies/santiago-chile" class="color_purple">políticas de privacidad.</a></label></div></form></div></div>
+      </div>
+      <script src="js/index.js"></script>
+</body>
+</html>
