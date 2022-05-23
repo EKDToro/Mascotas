@@ -59,6 +59,31 @@
             </ul>
           </li>
         </ul>
+        <!--CLIMA-->
+        <body onload="onLoad()">
+          <div id="loader" class="loader">Loading...</div>
+          <div id="container" class="contaier">
+              <div class="block">
+                  <div id="location"></div>
+                  <div id="date"></div>
+                  <div id="description"></div>
+              </div>
+              <div class="block">
+                  <div class="information-container">
+                      Temperatura
+                      <div class="information" id="temperature"></div>
+                  </div>
+                  <div class="information-container">
+                      Humedad
+                      <div class="information" id="humidity"></div>
+                  </div>
+                  <div class="information-container">
+                      Presion
+                      <div class="information" id="pressure"></div>
+                  </div>
+              </div>
+          </div>
+        </body>
         <form class="d-flex">
           <button type="button" onclick="javascript:void(window.open('carrito.html'));" title="carrito de compras">Carrito</button>
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -265,30 +290,6 @@
     <div class="col-1"></div>
   </div>
 </div>
-<!--CLIMA-->
-<body onload="onLoad()">
-  <div id="loader" class="loader">Loading...</div>
-  <div id="container" class="contaier">
-      <div class="block">
-          <div id="location"></div>
-          <div id="date"></div>
-          <div id="description"></div>
-      </div>
-      <div class="block">
-          <div class="information-container">
-              Temperatura
-              <div class="information" id="temperature"></div>
-          </div>
-          <div class="information-container">
-              Humedad
-              <div class="information" id="humidity"></div>
-          </div>
-          <div class="information-container">
-              Presion
-              <div class="information" id="pressure"></div>
-          </div>
-      </div>
-  </div>
 </body>
   <!--PIE DE PAGINA-->
   <div class="row footer_laika m-auto justify-content-center mb-4 mt-0 mt-md-4 div_footer_principal " style="background-color: #EE4A52;"><div class="col-md-4 col-lg-2 mt-5 text-center"><span><img data-src="https://www.tiendamascotamania.cl/wp-content/uploads/2021/05/logotipo.png" class="ml-2 text-right img-fluid img_laika_footer lazy" src="https://www.tiendamascotamania.cl/wp-content/uploads/2021/05/logotipo.png"> <p class="ml-0 ml-md-2 mt-2 p_img_laika_footer mb-0">Síguenos en:</p> 
